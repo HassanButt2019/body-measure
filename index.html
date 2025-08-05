@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Segment Measurement App</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- MediaPipe CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Body Measurement Tool</h1>
+            <p>Measure your body segments using pose detection</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Height Input Section -->
+            <section class="height-input-section">
+                <div class="input-group">
+                    <label for="height-input">Your Height (cm):</label>
+                    <input type="number" id="height-input" placeholder="Enter height in cm" min="100" max="250" step="0.1">
+                    <button id="save-height-btn" class="btn btn-primary">Save Height</button>
+                </div>
+                <div id="height-display" class="height-display"></div>
+            </section>
+
+            <!-- Camera Section -->
+            <section class="camera-section">
+                <div class="camera-container">
+                    <video id="camera-video" autoplay playsinline></video>
+                    <canvas id="camera-canvas"></canvas>
+                    <div class="camera-overlay">
+                        <div id="camera-status" class="status-message"></div>
+                        <button id="capture-btn" class="btn btn-capture" disabled>Take Photo</button>
+                        <button id="start-camera-btn" class="btn btn-primary">Start Camera</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Photo Analysis Section -->
+            <section class="analysis-section">
+                <div class="photo-container">
+                    <canvas id="analysis-canvas"></canvas>
+                    <div id="analysis-status" class="status-message"></div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <h2>Measurements</h2>
+                <div id="measurements-display" class="measurements-grid">
+                    <div class="measurement-card">
+                        <h3>Upper Arm</h3>
+                        <span id="upper-arm-measurement" class="measurement-value">-</span>
+                    </div>
+                    <div class="measurement-card">
+                        <h3>Forearm</h3>
+                        <span id="forearm-measurement" class="measurement-value">-</span>
+                    </div>
+                    <div class="measurement-card">
+                        <h3>Thigh</h3>
+                        <span id="thigh-measurement" class="measurement-value">-</span>
+                    </div>
+                    <div class="measurement-card">
+                        <h3>Shin</h3>
+                        <span id="shin-measurement" class="measurement-value">-</span>
+                    </div>
+                </div>
+                <div class="results-actions">
+                    <button id="save-results-btn" class="btn btn-secondary" disabled>Save Results</button>
+                    <button id="clear-results-btn" class="btn btn-outline">Clear</button>
+                </div>
+            </section>
+
+            <!-- Saved Results Section -->
+            <section class="saved-results-section">
+                <h2>Saved Measurements</h2>
+                <div id="saved-results-list" class="saved-results-list">
+                    <p class="empty-state">No saved measurements yet</p>
+                </div>
+                <button id="clear-all-btn" class="btn btn-outline">Clear All Saved</button>
+            </section>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Processing image...</p>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="error-modal" class="modal">
+            <div class="modal-content">
+                <h3>Error</h3>
+                <p id="error-message"></p>
+                <button id="close-error-btn" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/storage.js"></script>
+    <script src="js/canvas-renderer.js"></script>
+    <script src="js/measurements.js"></script>
+    <script src="js/pose-detector.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
