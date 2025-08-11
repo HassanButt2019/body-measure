@@ -85,6 +85,141 @@
                 </div>
                 <button id="clear-all-btn" class="btn btn-outline">Clear All Saved</button>
             </section>
+
+            <!-- Athletic Tests Section -->
+            <section class="athletic-tests-section">
+                <h2>Athletic Performance Tests</h2>
+                <div class="test-tabs">
+                    <button class="tab-btn active" data-test="broad-jump">Standing Broad Jump</button>
+                    <button class="tab-btn" data-test="sprint">Sprint Test (30m)</button>
+                    <button class="tab-btn" data-test="kick">Kick Power (10m)</button>
+                </div>
+
+                <!-- Test Controls -->
+                <div class="test-controls">
+                    <div class="control-group">
+                        <button id="calibrate-btn" class="btn btn-primary">Calibrate Lines</button>
+                        <button id="start-test-btn" class="btn btn-secondary" disabled>Start Test</button>
+                        <button id="reset-test-btn" class="btn btn-outline">Reset</button>
+                    </div>
+                    <div class="control-group">
+                        <button id="save-test-btn" class="btn btn-success" disabled>Save Result</button>
+                        <button id="export-json-btn" class="btn btn-outline">Export JSON</button>
+                    </div>
+                </div>
+
+                <!-- Test Instructions -->
+                <div id="test-instructions" class="test-instructions">
+                    <div class="instruction-content" data-test="broad-jump">
+                        <h4>Standing Broad Jump Instructions:</h4>
+                        <ol>
+                            <li>Calibrate by tapping takeoff line and expected landing area</li>
+                            <li>Position camera to capture full jump trajectory</li>
+                            <li>Start test and perform your jump</li>
+                            <li>Measurement finalizes 1 second after landing detection</li>
+                        </ol>
+                    </div>
+                    <div class="instruction-content" data-test="sprint" style="display: none;">
+                        <h4>Sprint Test (30m) Instructions:</h4>
+                        <ol>
+                            <li>Calibrate by tapping 0m, 15m, and 30m markers</li>
+                            <li>Position camera for side view of sprint lane</li>
+                            <li>Start test and begin sprinting when ready</li>
+                            <li>System tracks times at each marker automatically</li>
+                        </ol>
+                    </div>
+                    <div class="instruction-content" data-test="kick" style="display: none;">
+                        <h4>Kick Power Test (10m) Instructions:</h4>
+                        <ol>
+                            <li>Calibrate by tapping 0m and 10m lines</li>
+                            <li>Position camera to capture ball trajectory</li>
+                            <li>Start test and kick the ball</li>
+                            <li>System measures ball speed between markers</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Test Status -->
+                <div id="test-status" class="test-status">
+                    <div class="status-indicator">
+                        <span id="calibration-status">Not Calibrated</span>
+                        <span id="test-progress">Ready</span>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div id="test-results-panel" class="test-results-panel">
+                    <!-- Broad Jump Results -->
+                    <div class="result-content" data-test="broad-jump">
+                        <div class="result-metric">
+                            <label>Jump Distance:</label>
+                            <span id="jump-distance">-</span>
+                        </div>
+                        <div class="result-metric">
+                            <label>Takeoff Speed:</label>
+                            <span id="takeoff-speed">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Sprint Results -->
+                    <div class="result-content" data-test="sprint" style="display: none;">
+                        <div class="result-metrics-grid">
+                            <div class="result-metric">
+                                <label>0-15m Split:</label>
+                                <span id="split-0-15">-</span>
+                            </div>
+                            <div class="result-metric">
+                                <label>15-30m Split:</label>
+                                <span id="split-15-30">-</span>
+                            </div>
+                            <div class="result-metric">
+                                <label>Total Time:</label>
+                                <span id="total-time">-</span>
+                            </div>
+                            <div class="result-metric">
+                                <label>Avg Speed (0-30m):</label>
+                                <span id="avg-speed-total">-</span>
+                            </div>
+                            <div class="result-metric">
+                                <label>Max Speed:</label>
+                                <span id="max-speed">-</span>
+                            </div>
+                            <div class="result-metric">
+                                <label>Avg Accel (0-15m):</label>
+                                <span id="avg-accel-0-15">-</span>
+                            </div>
+                        </div>
+                        <div class="speed-chart">
+                            <canvas id="speed-chart-canvas" width="300" height="100"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Kick Power Results -->
+                    <div class="result-content" data-test="kick" style="display: none;">
+                        <div class="result-metric">
+                            <label>Ball Speed:</label>
+                            <span id="ball-speed-ms">-</span>
+                        </div>
+                        <div class="result-metric">
+                            <label>Ball Speed (km/h):</label>
+                            <span id="ball-speed-kmh">-</span>
+                        </div>
+                        <div class="result-metric">
+                            <label>Flight Time:</label>
+                            <span id="flight-time">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test History -->
+                <div class="test-history">
+                    <h3>Test History</h3>
+                    <div id="test-history-list" class="test-history-list">
+                        <p class="empty-state">No test results yet</p>
+                    </div>
+                    <button id="clear-test-history-btn" class="btn btn-outline">Clear History</button>
+                </div>
+            </section>
         </main>
 
         <!-- Loading Overlay -->
@@ -109,6 +244,12 @@
     <script src="js/measurements.js"></script>
     <script src="js/pose-detector.js"></script>
     <script src="js/camera.js"></script>
+    <script src="js/lines.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/smoothing.js"></script>
+    <script src="js/ball-tracker.js"></script>
+    <script src="js/exporter.js"></script>
+    <script src="js/athletics.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

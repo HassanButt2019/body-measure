@@ -75,6 +75,25 @@ class PoseDetector {
     }
 
     /**
+     * Detect pose from canvas data
+     */
+    async detectFromCanvas(canvas) {
+        if (!this.isInitialized || !this.pose) {
+            throw new Error('Pose detector not initialized');
+        }
+
+        try {
+            // Send canvas directly to MediaPipe
+            await this.pose.send({ image: canvas });
+        } catch (error) {
+            console.error('Canvas pose detection error:', error);
+            if (this.onDetectionError) {
+                this.onDetectionError('Failed to process canvas for pose detection');
+            }
+        }
+    }
+
+    /**
      * Handle pose detection results
      */
     handlePoseResults(results) {

@@ -290,4 +290,37 @@ class MeasurementCalculator {
 
         return comparison;
     }
+
+    /**
+     * Get current scale information for athletic tests
+     */
+    getScale() {
+        // This should be called after a successful measurement
+        // to get the current pixel-to-cm conversion
+        
+        // For now, return null if no recent measurement
+        // In practice, this would use the most recent successful calibration
+        return null;
+    }
+
+    /**
+     * Get scale from stored measurement data
+     */
+    static getScaleFromMeasurement(measurementData) {
+        if (!measurementData || !measurementData.pixelToCmRatio) {
+            return null;
+        }
+
+        const pxPerCm = 1 / measurementData.pixelToCmRatio;
+        const cmPerPx = measurementData.pixelToCmRatio;
+        const pxPerM = pxPerCm * 100;
+
+        return {
+            pxPerCm: pxPerCm,
+            cmPerPx: cmPerPx,
+            pxPerM: pxPerM,
+            imageWidth: measurementData.imageWidth || 640,
+            imageHeight: measurementData.imageHeight || 480
+        };
+    }
 }

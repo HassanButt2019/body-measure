@@ -409,4 +409,153 @@ class CanvasRenderer {
         this.ctx.fillStyle = watermarkStyle.fillColor;
         this.ctx.fillText(text, x, y);
     }
+
+    /**
+     * Draw guide line between two points with label
+     */
+    drawGuideLine(p1, p2, label, color = '#FFE66D') {
+        // Draw line
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        this.ctx.lineTo(p2.x, p2.y);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 3;
+        this.ctx.setLineDash([10, 5]);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // Draw label at midpoint
+        if (label) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            this.drawTextLabel(midX, midY, label, color);
+        }
+    }
+
+    /**
+     * Draw marker at point with label
+     */
+    drawMarker(point, label, color = '#FF6B6B') {
+        // Draw circle marker
+        this.ctx.beginPath();
+        this.ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+        this.ctx.fillStyle = color;
+        this.ctx.fill();
+        this.ctx.strokeStyle = '#FFFFFF';
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
+
+        // Draw label
+        if (label) {
+            this.drawTextLabel(point.x, point.y - 15, label, color);
+        }
+    }
+
+    /**
+     * Draw sparkline chart
+     */
+    drawSparkline(series, x, y, width, height, color = '#4ECDC4') {
+        if (!series || series.length < 2) return;
+
+        // Find min/max values
+        const minVal = Math.min(...series);
+        const maxVal = Math.max(...series);
+        const range = maxVal - minVal;
+
+        if (range === 0) return;
+
+        // Draw background
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        this.ctx.fillRect(x, y, width, height);
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(x, y, width, height);
+
+        // Draw sparkline
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 2;
+
+        for (let i = 0; i < series.length; i++) {
+            const px = x + (i / (series.length - 1)) * width;
+            const py = y + height - ((series[i] - minVal) / range) * height;
+
+            if (i === 0) {
+                this.ctx.moveTo(px, py);
+            } else {
+                this.ctx.lineTo(px, py);
+            }
+        }
+
+        this.ctx.stroke();
+    }
+
+    /**
+     * Draw text label with background
+     */
+    drawTextLabel(x, y, text, color = '#FFFFFF') {
+        this.ctx.font = '12px Arial';
+        const textMetrics = this.ctx.measureText(text);
+        const textWidth = textMetrics.width;
+        const textHeight = 12;
+
+        // Draw background
+        const padding = 4;
+        const bgX = x - textWidth / 2 - padding;
+        const bgY = y - textHeight / 2 - padding;
+        const bgWidth = textWidth + padding * 2;
+        const bgHeight = textHeight + padding * 2;
+
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(bgX, bgY, bgWidth, bgHeight);
+
+        // Draw text
+        this.ctx.fillStyle = color;
+        this.ctx.fillText(text, x - textWidth / 2, y + textHeight / 4);
+    }
+
+    /**
+     * Draw crossing tick marks
+     */
+    drawCrossingTicks(points, labels, color = '#28a745') {
+        points.forEach((point, index) => {
+            if (point && labels[index]) {
+                // Draw vertical tick line
+                this.ctx.beginPath();
+                this.ctx.moveTo(point.x, 0);
+                this.ctx.lineTo(point.x, this.canvas.height);
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+
+                // Draw label
+                this.drawTextLabel(point.x, 30, labels[index], color);
+            }
+        });
+    }
+
+    /**
+     * Draw distance/speed chips
+     */
+    drawInfoChip(x, y, text, value, unit, color = '#667eea') {
+        const chipWidth = 120;
+        const chipHeight = 40;
+
+        // Draw chip background
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(x, y, chipWidth, chipHeight);
+        this.ctx.strokeStyle = '#FFFFFF';
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeRect(x, y, chipWidth, chipHeight);
+
+        // Draw text
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.font = 'bold 10px Arial';
+        this.ctx.fillText(text, x + 5, y + 15);
+        
+        this.ctx.font = 'bold 14px Arial';
+        this.ctx.fillText(`${value} ${unit}`, x + 5, y + 32);
+    }
 }

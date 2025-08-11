@@ -361,4 +361,80 @@ class MeasurementStorage {
             return 0;
         }
     }
+
+    /**
+     * Save athletic test result
+     */
+    saveTestResult(testType, result) {
+        try {
+            const storageKey = `athleticTest_${testType}`;
+            let results = [];
+            
+            const saved = localStorage.getItem(storageKey);
+            if (saved) {
+                results = JSON.parse(saved);
+            }
+            
+            // Add unique ID and ensure timestamp
+            const resultToSave = {
+                ...result,
+                id: this.generateMeasurementId(),
+                timestamp: result.timestamp || Date.now()
+            };
+            
+            // Add to beginning (newest first)
+            results.unshift(resultToSave);
+            
+            // Limit to 50 results per test type
+            if (results.length > 50) {
+                results.splice(50);
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(results));
+            return resultToSave.id;
+            
+        } catch (error) {
+            console.error('Failed to save test result:', error);
+            throw new Error('Failed to save test result');
+        }
+    }
+
+    /**
+     * Get test results for specific test type
+     */
+    getTestResults(testType) {
+        try {
+            const storageKey = `athleticTest_${testType}`;
+            const saved = localStorage.getItem(storageKey);
+            return saved ? JSON.parse(saved) : [];
+        } catch (error) {
+            console.error('Failed to get test results:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Clear test results for specific test type
+     */
+    clearTestResults(testType) {
+        try {
+            const storageKey = `athleticTest_${testType}`;
+            localStorage.removeItem(storageKey);
+            return true;
+        } catch (error) {
+            console.error('Failed to clear test results:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Get all athletic test results
+     */
+    getAllTestResults() {
+        return {
+            'broad-jump': this.getTestResults('broad-jump'),
+            'sprint': this.getTestResults('sprint'),
+            'kick': this.getTestResults('kick')
+        };
+    }
 }

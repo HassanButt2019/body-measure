@@ -184,6 +184,67 @@ class CameraController {
     }
 
     /**
+     * Start frame loop for continuous processing
+     */
+    startFrameLoop(onFrame) {
+        if (!this.stream || !this.video.videoWidth) {
+            throw new Error('Camera not ready');
+        }
+
+        this.isFrameLoopRunning = true;
+        this.onFrame = onFrame;
+        
+        const processFrame = () => {
+            if (!this.isFrameLoopRunning) return;
+            
+            try {
+                // Create canvas for current frame
+                const frameCanvas = document.createElement('canvas');
+                const frameCtx = frameCanvas.getContext('2d');
+                
+                frameCanvas.width = this.video.videoWidth;
+                frameCanvas.height = this.video.videoHeight;
+                
+                // Draw current video frame
+                frameCtx.drawImage(this.video, 0, 0, frameCanvas.width, frameCanvas.height);
+                
+                // Get image data
+                const imageData = frameCtx.getImageData(0, 0, frameCanvas.width, frameCanvas.height);
+                
+                // Call frame callback
+                if (this.onFrame) {
+                    this.onFrame({
+                        imageData: imageData,
+                        canvas: frameCanvas,
+                        width: frameCanvas.width,
+                        height: frameCanvas.height,
+                        timestamp: performance.now()
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Frame processing error:', error);
+            }
+            
+            // Schedule next frame
+            requestAnimationFrame(processFrame);
+        };
+        
+        // Start the loop
+        requestAnimationFrame(processFrame);
+        console.log('Frame loop started');
+    }
+
+    /**
+     * Stop frame loop
+     */
+    stopFrameLoop() {
+        this.isFrameLoopRunning = false;
+        this.onFrame = null;
+        console.log('Frame loop stopped');
+    }
+
+    /**
      * Switch camera (front/back) on mobile devices
      */
     async switchCamera() {
